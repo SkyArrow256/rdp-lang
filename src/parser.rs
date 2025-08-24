@@ -110,4 +110,4 @@ pub struct CallFunc {
 pub struct Str(String);
 
 #[derive(Debug)]
-pub struct Ident(String);
+pub struct Ident(pub String);
