@@ -1,10 +1,7 @@
 use crate::parser::Program;
 
-pub struct Evaluator {
-}
+pub struct Evaluator {}
 
 impl Evaluator {
-	pub fn run(program: Program) {
-
-	}
+    pub fn run(program: Program) {}
 }
