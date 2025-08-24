@@ -19,54 +19,68 @@ impl<'a> Parser<'a> {
 		}
 		program
 	}
-	fn funcdef(&mut self) -> Program {
+	fn funcdef(&mut self) -> FuncDef {
 
 	}
-	fn funcargs(&mut self) -> Program {
+	fn funcargs(&mut self) -> Funcargs {
 
 	}
-	fn statlist(&mut self) -> Program {
-
+	fn statlist(&mut self) -> Statlist {
+		let mut statlist = Statlist { statements: Vec::new() };
+		while self.scanner.is_match(Token::Ident("".to_string())) {
+			statlist.statements.push(self.statement());
+		}
+		statlist
 	}
-	fn statement(&mut self) -> Program {
+	fn statement(&mut self) -> Statement {
 		if let Some(Token::Ident(name)) = self.scanner.take() {
 			//セミコロンを取る
 			self.scanner.take();
+			Statement::CallFunc(self.call_func(Ident(name)))
 		} else {
-			panic!();
+			panic!("予期されていないトークンです")
 		}
 	}
-	fn call_func(&mut self) -> Program {
-		
+	fn call_func(&'a mut self, name: Ident) -> CallFunc {
+		//かっこを取る
+		self.scanner.take().unwrap();
+		let arg = self.scanner.take();
+		self.scanner.take().unwrap();
+		if let Some(Token::String(arg)) = arg {
+			let arg = Str(arg);
+			CallFunc { name, arg }
+		} else {
+			panic!("予期されていないトークンです");
+		}
 	}
 }
 
-struct Program{
-	funcdefs: Vec<FuncDef>,
+pub struct Program{
+	pub funcdefs: Vec<FuncDef>,
 }
-struct FuncDef {
-	name: Ident,
-	args: Funcargs,
-	statlist: Statlist,
-}
-
-struct Funcargs {
-	idents: Vec<Ident>,
+pub struct FuncDef {
+	pub name: Ident,
+	pub args: Funcargs,
+	pub statlist: Statlist,
 }
 
-struct Statlist {
-	statements: Vec<Statement>,
+pub struct Funcargs {
+	pub idents: Vec<Ident>,
 }
 
-enum Statement {
+pub struct Statlist {
+	pub statements: Vec<Statement>,
+}
+
+pub enum Statement {
 	CallFunc(CallFunc),
 }
 
-struct CallFunc {
-	name: Ident,
-	arg: Str,
+pub struct CallFunc {
+	pub name: Ident,
+	pub arg: Str,
 }
 
-struct Str(String);
+pub struct Str(String);
 
-struct Ident(String);
+pub struct Ident(String);
