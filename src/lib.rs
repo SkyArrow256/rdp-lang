@@ -11,5 +11,5 @@ pub fn run(text: &str) {
     println!("{sc:#?}");
     let ast = Parser::with_scanner(sc).parse();
     println!("{ast:#?}");
-    Evaluator::run(ast);
+    Evaluator::new(ast).apply();
 }

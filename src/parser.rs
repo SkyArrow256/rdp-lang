@@ -48,16 +48,16 @@ impl Parser {
             statements: Vec::new(),
         };
         while self.scanner.is_match(Token::Ident("".to_string())) {
-			println!("命令が見つかりました");
+            println!("命令が見つかりました");
             statlist.statements.push(self.statement());
         }
         statlist
     }
     fn statement(&mut self) -> Statement {
         if let Some(Token::Ident(name)) = self.scanner.take() {
-			let statement = Statement::CallFunc(self.call_func(Ident(name)));
+            let statement = Statement::CallFunc(self.call_func(Ident(name)));
             self.scanner.take(); //セミコロンを取る
-			statement
+            statement
         } else {
             panic!("予期されていないトークンです");
         }
