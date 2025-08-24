@@ -1,5 +1,8 @@
 use crate::scanner::{Scanner, Token};
 
+// トークンをtakeするときに型の確認とかできるようにした方が絶対いいと思った。
+// 実際に値でない部分（かっことかセミコロンとか）のトークンが間違ってても気づかないし...
+
 pub struct Parser {
     scanner: Scanner,
 }
@@ -27,7 +30,7 @@ impl Parser {
             self.scanner.take().unwrap(); //)を取る
             self.scanner.take().unwrap(); //{を取る
             let statlist = self.statlist();
-            self.scanner.take().unwrap(); //}を取る
+            //self.scanner.take().unwrap(); //}を取る
             FuncDef {
                 name: Ident(name),
                 args,
@@ -45,21 +48,21 @@ impl Parser {
             statements: Vec::new(),
         };
         while self.scanner.is_match(Token::Ident("".to_string())) {
+			println!("命令が見つかりました");
             statlist.statements.push(self.statement());
         }
         statlist
     }
     fn statement(&mut self) -> Statement {
         if let Some(Token::Ident(name)) = self.scanner.take() {
-            //セミコロンを取る
-            self.scanner.take();
-            Statement::CallFunc(self.call_func(Ident(name)))
+			let statement = Statement::CallFunc(self.call_func(Ident(name)));
+            self.scanner.take(); //セミコロンを取る
+			statement
         } else {
             panic!("予期されていないトークンです");
         }
     }
     fn call_func(&mut self, name: Ident) -> CallFunc {
-        //かっこを取る
         self.scanner.take().unwrap();
         let arg = self.scanner.take();
         self.scanner.take().unwrap();
